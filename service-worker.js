@@ -36,6 +36,22 @@ function send_message_to_client(client, msg){
     });
 }
 
+function send_message_to_specific_client(msg){
+  clients.matchAll().then(function(clients) {
+    console.log(clients);
+    // console.log(clients.id);
+     var i=0;
+     clients.forEach(client => {      
+      if(i==0){
+        console.log('sent '+i);
+        send_message_to_client(client, msg).then(m => console.log("SW Received Message: "+m));
+      }
+      i++;
+        })
+  });
+}
+
+
 function send_message_to_all_clients(msg){
     clients.matchAll().then(clients => {
         clients.forEach(client => {
