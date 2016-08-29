@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+    <title>Service Worker - Client 2</title>
+</head>
+<body>
+    <!-- <script>
+    	var msg = 'This is test message msg';
+    	function send_message_to_sw(msg){
+    		navigator.serviceWorker.controller.postMessage("Client 2 says '"+msg+"'");
+		}
+    </script> -->
+   <!--  <script type="text/javascript">
+    	import createChannel from 'swivel/client2.html'
+        var swivel = createChannel()
+    </script> -->
+    <script type="text/javascript">
+        function send_message_to_sw(msg){
+            return new Promise(function(resolve, reject){   
+            // Create a Message Channel
+                var msg_chan = new MessageChannel();
+
+                // Handler for recieving message reply from service worker
+                msg_chan.port1.onmessage = function(event){
+                    if(event.data.error){
+                        reject(event.data.error);
+                    }
+                    else{
+                        resolve(event.data);
+                    }
+                };
+
+                // Send message to service worker along with port for reply
+                navigator.serviceWorker.controller.postMessage("Client 2 says '"+msg+"'", [msg_chan.port2]);
+            });
+        }
+    </script>
+
+    <script type="text/javascript">
+        if('serviceWorker' in navigator){
+        // Handler for messages coming from the service worker
+            navigator.serviceWorker.addEventListener('message', function(event){
+                console.log("Client 2 Received Message: " + event.data);
+                event.ports[0].postMessage("Client 2 Says 'Hello back!'");
+            });
+        }
+    </script> 
+</body>
+</html>
