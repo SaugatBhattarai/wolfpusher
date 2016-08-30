@@ -37,7 +37,7 @@ function send_message_to_client(client, msg){
 
 function send_message_to_specific_client(msg){
   clients.matchAll().then(function(clients) {
-    console.log(clients);
+    // console.log(clients);
      var i=0;
      clients.forEach(client => {      
       if(i==0){
@@ -54,6 +54,17 @@ clients.matchAll().then(function(clients) {
   var messageChannel = new MessageChannel();
     for(var i = 0 ; i < clients.length ; i++) {
           if(clients[i].url === 'http://localhost/wolfpusher/client2.html') {
+            send_message_to_client(clients[i], msg).then(m => console.log("SW Received Message: "+m)); 
+          }
+    }
+  });
+}
+
+function send_message_to_specific_given_link(client,msg){
+clients.matchAll().then(function(clients) {
+  var messageChannel = new MessageChannel();
+    for(var i = 0 ; i < clients.length ; i++) {
+          if(clients[i].url === "http://localhost/wolfpusher/"+client){
             send_message_to_client(clients[i], msg).then(m => console.log("SW Received Message: "+m)); 
           }
     }
