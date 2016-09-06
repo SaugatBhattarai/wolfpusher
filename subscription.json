@@ -1,0 +1,16 @@
+// [{
+// "endpoint":"https://updates.push.services.mozilla.com/wpush/v1/gAAAAABXzltd1F2qQLDno1-Oh6nIzsAKe1eTv6H49hnfIlNb5ufpYDBj-DhdRGP26ss-1bJbghlxwiZQrjw64BwtkKM-0xqFNC3eS9ECBeHe5cqaK3cAB0nbu2BlNLPSDpM9C7dxeD0s",
+// "keys":{
+// 	"auth":"T_5mtQ-DPh_caRp87lWetA",
+// 	"p256dh":"BK0L7PEPlANSPwcc5IolFYr3FcgmX5yaXptPUx2yJgnf1-Fszd5AiOx5GTvmibJ7wTR6p0LgewhaxzAhR93H6Dw"
+// 	}
+// },
+// {
+// "endpoint":"https://android.googleapis.com/gcm/send/fKs9GigDhdk:APA91bHMO3fLKyY5LRRzaWB…YVWEfHLbnqVvaeHT58rWTdL24sqnjU2t-hBMJNn1whl5oYPaB0MU25TpneGkUHob8Ta3jPahdJ",
+// "keys":{
+// 	"p256dh":"BNjIlDMGbDJzxg-lOb2AyO0NANMDY4aLrdwMXO62gWobsd0eChaRnRcbUVnBHfWxmwry4OYp7SCwv108EJdfOUk=",
+// 	"auth":"WUH3ljVy-qidBdG6GG4MDg=="
+// }
+// }]
+
+{"id": "fKs9GigDhdk:APA91bHMO3fLKyY5LRRzaWB…YVWEfHLbnqVvaeHT58rWTdL24sqnjU2t-hBMJNn1whl5oYPaB0MU25TpneGkUHob8Ta3jPahdJ"}

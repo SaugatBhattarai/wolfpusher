@@ -1,0 +1,9 @@
+
+{  
+  "name": "wolfpusher",  
+  "short_name": "wolfpusher",  
+  "start_url": "./wolfpusher",  
+  "display": "standalone",  
+  "gcm_sender_id": "548401616307",  
+  "gcm_user_visible_only": true  
+}
