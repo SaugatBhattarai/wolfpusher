@@ -2,28 +2,180 @@
 <html>
 <head>
     <title>Client 1</title>
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <!--<script>
-        if('serviceWorker' in navigator){
-                //Register service worker
-            navigator.serviceWorker.register('service-worker.js').then(function(reg){
-                console.log("SW registration succeeded. Scope is "+reg.scope);
-            }).catch(function(err){
-                console.error("SW registration failed with error "+err);
-            });
-        }
-    </script> -->
+<div id="not-status"></div>
+<div id="pushStatus"></div>
+<div id="pushStatusMsg"></div>
+
 <script type="text/javascript">
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js').then(function(registration) {
+
+//Track state of push permission
+var pushStatus;
+var sw_support=false;
+
+window.onload = function() {  
+     if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js').then(function(registration) {
         // Registration was successful
-        console.log('ServiceWorker registration successful with scope: ',    registration.scope);
-      }).catch(function(err) {
-        // registration failed :(
-        console.log('ServiceWorker registration failed: ', err);
+        console.log('ServiceWorker registration successful with scope: ',registration.scope);
+      // Registration was successful, show interface
+      document.getElementById('not-status').innerHTML = '<h4>mobiForge notifications</h4><input type="checkbox" name="pushStatus" id="pushStatus" value="false" /><label for="pushStatus">Receive push notifications for new content</label><div id="pushStatusMsg"></div>';
+ 
+      //Check subscription state
+      checkSubscription();
+ 
+      //Attach listener
+      document.getElementById("pushStatus").addEventListener('click', function(){
+        subUnsubPush();
       });
-    }
+    }).catch(function(err) {
+      // registration failed :(
+      console.log('ServiceWorker registration failed: ', err);
+    });
+  }
+  else {
+    console.log("ServiceWorker not supported :-(");
+    document.getElementById('not-status').innerHTML = 'ServiceWorker not supported :-(';
+  }
+}
+
+
+// The PushManager.getSubscription() method of the PushManager interface retrieves an existing push subscription.
+function checkSubscription() {
+    // console.log("Here Check for subscription ... ");
+    navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
+      serviceWorkerRegistration.pushManager.getSubscription().then(
+
+        function(pushSubscription) {
+          if(!!pushSubscription) {
+        // We aren’t subscribed to push, so set UI
+        // to allow the user to enable push
+
+            // console.log("Here inside check subscription");
+            // console.log(pushSubscription);
+            // console.log(pushSubscription.toJSON().keys.auth);
+
+            //Send subscription to application server
+            sendSub(pushSubscription);
+ 
+            //Manage interface
+            pushStatus = true;
+            document.getElementById("pushStatus").checked = true;
+            document.getElementById("pushStatusMsg").innerHTML = '<span>You are subscribed!</span>';
+          }
+          else {
+            //Manage interface
+            pushStatus = false;
+            document.getElementById("pushStatus").checked = false;
+            document.getElementById("pushStatusMsg").innerHTML = '<span>You are not subscribed!</span>';
+          }
+        }.bind(this)).catch(function(e) {
+          console.error('Error getting subscription', e);
+        });
+    });
+  }
+  function subscribePush() {
+  navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
+    serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true})
+      .then(function(pushSubscription) {
+
+        //Store this subscription on application server
+        sendSub(pushSubscription);
+
+        //Update status of interface
+        document.getElementById("pushStatus").checked = true;
+        document.getElementById("pushStatusMsg").innerHTML = '<span>You are subscribed!</span>';
+        pushStatus = true;
+      })
+      .catch(function(e) {
+        console.error('Unable to register push subscription', e);
+      });
+  });
+}
+
+//Send to Application server
+function sendSub(pushSubscription) {
+  console.log("Ready to send subscription");
+  console.log(JSON.stringify(pushSubscription));
+  //get endpoint
+  const endPoint = pushSubscription.endpoint.slice(pushSubscription.endpoint.lastIndexOf('/')+1);
+   //console.log(endPoint);
+   fetch("http://localhost/wolfpusher/subscribe.php?sid="+endPoint+"&act=sub").then(function(res) {
+    console.log("This is endPoint "+endPoint);
+    // console.log(res); 
+    //   res.json().then(function(data) {
+    //     console.log(data);
+    //   }).catch(function(e) {
+    //       console.error('Error sending subscription to server:', e);
+    //     }); 
+    })
+}
+function subUnsubPush() {
+  //Get current status
+  if(!pushStatus) subscribePush();
+  else unsubscribePush();
+}
+
+// function sendSub(pushSubscription) {
+//   fetch("http://localhost/wolfpusher/"+pushSubscription.id).then(function(res) {
+//     res.json().then(function(data) {
+//       // Log the data for illustration
+//       console.log(data);
+//     })
+// });
+// }
+
+function unsubscribePush() {
+  console.log('unsubscribing...');
+  navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {  
+ 
+    serviceWorkerRegistration.pushManager.getSubscription().then(  
+      function(pushSubscription) {  
+        // Check we have a subscription to unsubscribe  
+        if (!pushSubscription) {  
+          // Nothing to unsubscribe, set checkboox interface unchecked...
+          document.getElementById("pushStatus").checked = false;
+          document.getElementById("pushStatusMsg").innerHTML = '<span>You are not subscribed!</span>';
+          pushStatus = false;
+          return;  
+        }  
+ 
+        // We have a subscription, so remove it from applications server...
+        cancelSub(pushSubscription);
+ 
+        //... and unsubscribe it
+        pushSubscription.unsubscribe().then(function() {  
+          //User unchecked the checkbox, but let's make sure
+          document.getElementById("pushStatus").checked = false;
+          document.getElementById("pushStatusMsg").innerHTML = '<span>You are not subscribed!</span>';
+          pushStatus = false;
+        }).catch(function(e) {  
+          console.log('Error unsubscribing: ', e);  
+        });  
+      }).catch(function(e) {  
+        console.error('Error unsubscribing.', e);  
+      });  
+  });  
+}
+
+function cancelSub(pushSubscription) {
+  const endPoint = pushSubscription.endpoint.slice(pushSubscription.endpoint.lastIndexOf('/')+1);
+  fetch("http://localhost/wolfpusher/subscribe.php?sid="+endPoint+"&act=unsub").then(function(res) {
+    // res.json().then(function(data) {
+          // Show notification
+      console.log("Unsubscribing here ... data");
+          //self.registration.showNotification(data.title, {
+          //body: data.body,
+          //icon: data.icon,
+          //tag: data.tag
+        //})
+    // })
+  })
+}
+
+
 </script>
     <!-- <script type="text/javascript">
         var msg = 'This is test message msg';
@@ -65,3 +217,18 @@
 
 </body>
 </html>
+
+<!-- <script type="text/javascript">
+(function(p,u,s,h){
+    p._pcq=p._pcq||[];
+    p._pcq.push(['_currentTime',Date.now()]);
+    s=u.createElement('script');
+    s.type='text/javascript';
+    s.async=true;
+    s.src='https://cdn.pushcrew.com/js/a214412c75d107a873022185d3bd1baf.js';
+    h=u.getElementsByTagName('script')[0];
+    h.parentNode.insertBefore(s,h);
+})(window,document);
+</script>
+ -->
+
