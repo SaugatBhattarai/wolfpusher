@@ -53,7 +53,6 @@ function checkSubscription() {
         // We aren’t subscribed to push, so set UI
         // to allow the user to enable push
 
-            // console.log("Here inside check subscription");
             // console.log(pushSubscription);
             // console.log(pushSubscription.toJSON().keys.auth);
 
@@ -101,7 +100,6 @@ function sendSub(pushSubscription) {
   console.log(JSON.stringify(pushSubscription));
   //get endpoint
   const endPoint = pushSubscription.endpoint.slice(pushSubscription.endpoint.lastIndexOf('/')+1);
-   //console.log(endPoint);
    fetch("http://localhost/wolfpusher/subscribe.php?sid="+endPoint+"&act=sub").then(function(res) {
     console.log("This is endPoint "+endPoint);
     // console.log(res); 
