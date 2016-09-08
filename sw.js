@@ -15,7 +15,7 @@ self.addEventListener('push', function(event) {
 
   //We wait for data fetch and notification promises
   event.waitUntil(
-    fetch("https://mobiforge.com/push/latest.json", fetchInit).then(function(res) {
+    fetch("http://localhost/wolfpusher/latest.json", fetchInit).then(function(res) {
       return res.json().then(function(notificationData) {
         // Show notification
         console.log(notificationData);

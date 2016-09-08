@@ -17,11 +17,11 @@ var sw_support=false;
 
 window.onload = function() {  
      if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js').then(function(registration) {
+    navigator.serviceWorker.register('sw.js').then(function(registration) {
         // Registration was successful
         console.log('ServiceWorker registration successful with scope: ',registration.scope);
       // Registration was successful, show interface
-      document.getElementById('not-status').innerHTML = '<h4>mobiForge notifications</h4><input type="checkbox" name="pushStatus" id="pushStatus" value="false" /><label for="pushStatus">Receive push notifications for new content</label><div id="pushStatusMsg"></div>';
+      document.getElementById('not-status').innerHTML = '<h4>wolfpusher notifications</h4><input type="checkbox" name="pushStatus" id="pushStatus" value="false" /><label for="pushStatus">Receive push notifications for new content</label><div id="pushStatusMsg"></div>';
  
       //Check subscription state
       checkSubscription();
@@ -97,7 +97,7 @@ function checkSubscription() {
 //Send to Application server
 function sendSub(pushSubscription) {
   console.log("Ready to send subscription");
-  console.log(JSON.stringify(pushSubscription));
+  console.log(JSON.stringify(pushSubscription)); //PushSubscription object to serialize it for sending to your server 
   //get endpoint
   const endPoint = pushSubscription.endpoint.slice(pushSubscription.endpoint.lastIndexOf('/')+1);
    fetch("http://localhost/wolfpusher/subscribe.php?sid="+endPoint+"&act=sub").then(function(res) {
