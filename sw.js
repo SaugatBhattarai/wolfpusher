@@ -45,7 +45,7 @@ self.addEventListener('push', function(event) {
         if(Notification.permission=='granted') {
           return self.registration.showNotification(notificationData.data.title, {
             body: notificationData.data.body,
-            icon: 'mf_logo.png'
+            icon: 'images/images.png'
           });
 
         }
@@ -54,7 +54,7 @@ self.addEventListener('push', function(event) {
             if(permission=='granted') {
               return self.registration.showNotification(notificationData.data.title, {
                 body: notificationData.data.body,
-                icon: 'mf_logo.png'
+                icon: 'images/images.png'
               });
             }
           });

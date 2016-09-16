@@ -53,6 +53,7 @@ function checkSubscription() {
         // We aren’t subscribed to push, so set UI
         // to allow the user to enable push
 
+            // console.log("This is pushSubscription");
             // console.log(pushSubscription);
             // console.log(pushSubscription.toJSON().keys.auth);
 
@@ -80,6 +81,9 @@ function checkSubscription() {
     serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true})
       .then(function(pushSubscription) {
 
+
+        console.log("This is pushSubscription subscribed in sw");
+        console.log(pushSubscription);
         //Store this subscription on application server
         sendSub(pushSubscription);
 
@@ -97,18 +101,29 @@ function checkSubscription() {
 //Send to Application server
 function sendSub(pushSubscription) {
   console.log("Ready to send subscription");
+  var data =JSON.stringify(pushSubscription);
   console.log(JSON.stringify(pushSubscription)); //PushSubscription object to serialize it for sending to your server 
   //get endpoint
   const endPoint = pushSubscription.endpoint.slice(pushSubscription.endpoint.lastIndexOf('/')+1);
    fetch("http://localhost/wolfpusher/subscribe.php?sid="+endPoint+"&act=sub").then(function(res) {
     console.log("This is endPoint "+endPoint);
-    // console.log(res); 
-    //   res.json().then(function(data) {
-    //     console.log(data);
-    //   }).catch(function(e) {
-    //       console.error('Error sending subscription to server:', e);
-    //     }); 
-    })
+    console.log(res); 
+
+    Promise.resolve(JSON.parse(data))
+    .then(function(data){
+      console.log(data);
+    }).catch(function(e){
+      console.error('Error sending subscription to server:', e);
+    });
+
+
+    
+    // //   // res.json().then(function(data) {
+    // //     console.log(data);
+    // //   }).catch(function(e) {
+    // //       console.error('Error sending subscription to server:', e);
+    // //     }); 
+  })
 }
 function subUnsubPush() {
   //Get current status
@@ -212,7 +227,6 @@ function cancelSub(pushSubscription) {
             });
         }
     </script> 
-
 </body>
 </html>
 

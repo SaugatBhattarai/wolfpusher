@@ -35,26 +35,22 @@
 
 
 ?>
-
-
 <?php
 function send_push_message($subscription_ids){
 	var_dump("Here ....");
 
   // Set GCM endpoint
   $url = 'https://android.googleapis.com/gcm/send';
- 
+
+
   $fields = array(
-      'registration_ids' => $subscription_ids
+      'registration_ids' => array($subscription_ids)
   );
  
   $headers = array(
-      'Authorization:key=' => urlencode("AIzaSyB8GZpOxfA_Tn4u1iGI1sV3aplr6g0R8j4"),
-      'Content-Type' =>'application/json'
+      'Authorization:key='."AIzaSyDhx66lA2g02vAXEXQDqb19-DA2yjy5T_4",
+      'Content-Type:application/json'
   );
-
-  // username' => "annonymous",
-  //           'api_key' => urlencode("1234"),
  
  var_dump($headers);
   $ch = curl_init();
@@ -65,7 +61,7 @@ function send_push_message($subscription_ids){
   curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
   curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-  curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+  curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($fields));
  
   var_dump("this is curl response");
 
@@ -81,7 +77,7 @@ function send_push_message($subscription_ids){
     }
 else{
 	var_dump($result);
-	echo $result;
+	// echo $result;
 }
   // Close connection
   curl_close($ch);
