@@ -16,7 +16,7 @@
 			} else {
 			    echo "Error: " . $sql . "<br>" . mysqli_error($conn);
 			}
-			send_push_message($sid);
+			// send_push_message($sid);	
 			// send_push_message("f98tEs-nL_E:APA91bFWUcnqh3FJtUMmaM30PL6MpBlkUjV6mrk-EunVB3bXxr8Qjm1NrhtCqH_iWdQNYDIX0jt9PsmsQxrpLqOzu72lhj_gb6_YyI1QBBnrLhFfaCFw-6BbPv8_v5VW-qKlDYF_poLu");
 			mysqli_close($conn);
 		}
