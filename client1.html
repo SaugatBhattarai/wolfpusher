@@ -76,69 +76,53 @@ function checkSubscription() {
         });
     });
   }
+
   function subscribePush() {
-  navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
-    serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true})
-      .then(function(pushSubscription) {
+    navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
+      serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true})
+        .then(function(pushSubscription) {
 
-
-        console.log("This is pushSubscription subscribed in sw");
-        console.log(pushSubscription);
-        //Store this subscription on application server
-        sendSub(pushSubscription);
-
-        //Update status of interface
-        document.getElementById("pushStatus").checked = true;
-        document.getElementById("pushStatusMsg").innerHTML = '<span>You are subscribed!</span>';
-        pushStatus = true;
-      })
-      .catch(function(e) {
-        console.error('Unable to register push subscription', e);
-      });
-  });
+          console.log("PushSubscription status:");
+          console.log(pushSubscription);
+          //Store this subscription on application server
+          sendSub(pushSubscription);
+          //Update status of interface
+          document.getElementById("pushStatus").checked = true;
+          document.getElementById("pushStatusMsg").innerHTML = '<span>You are subscribed!</span>';
+          pushStatus = true;
+        })
+        .catch(function(e) {
+          console.error('Unable to register push subscription', e);
+        });
+    });
 }
 
 //Send to Application server
 function sendSub(pushSubscription) {
-  console.log("Ready to send subscription");
-  var data =JSON.stringify(pushSubscription);
-  console.log(JSON.stringify(pushSubscription)); //PushSubscription object to serialize it for sending to your server 
-  //get endpoint
-  const endPoint = pushSubscription.endpoint.slice(pushSubscription.endpoint.lastIndexOf('/')+1);
-   fetch("http://localhost/wolfpusher/subscribe.php?sid="+endPoint+"&act=sub").then(function(res) {
-    console.log("This is endPoint "+endPoint);
-    console.log(res); 
-
-    Promise.resolve(JSON.parse(data))
-    .then(function(data){
-      console.log(data);
-    }).catch(function(e){
-      console.error('Error sending subscription to server:', e);
-    });
-
-
-    
-    // //   // res.json().then(function(data) {
-    // //     console.log(data);
-    // //   }).catch(function(e) {
-    // //       console.error('Error sending subscription to server:', e);
-    // //     }); 
-  })
+    console.log("Ready to send subscription");
+    var data =JSON.stringify(pushSubscription);
+    //PushSubscription object to serialize it for sending to your server
+    // console.log(JSON.stringify(pushSubscription));  
+    //get endpoint
+    const endPoint = pushSubscription.endpoint.slice(pushSubscription.endpoint.lastIndexOf('/')+1);
+    fetch("http://localhost/wolfpusher/subscribe.php?sid="+endPoint+"&act=sub").then(function(res) {
+        // console.log("This is endPoint "+endPoint);
+        // console.log(res); 
+        Promise.resolve(JSON.parse(data))
+        .then(function(data){
+          // console.log(data);
+          console.log("Successfully Sent Subscription to server");
+        }).catch(function(e){
+          console.error('Error sending subscription to server:', e);
+        });
+    })
 }
+
 function subUnsubPush() {
   //Get current status
   if(!pushStatus) subscribePush();
   else unsubscribePush();
 }
-
-// function sendSub(pushSubscription) {
-//   fetch("http://localhost/wolfpusher/"+pushSubscription.id).then(function(res) {
-//     res.json().then(function(data) {
-//       // Log the data for illustration
-//       console.log(data);
-//     })
-// });
-// }
 
 function unsubscribePush() {
   console.log('unsubscribing...');

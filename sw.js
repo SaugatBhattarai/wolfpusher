@@ -2,7 +2,6 @@
 
 self.addEventListener('push', function(event) {
   console.log('push received');
-
   //Set some no cache headers for retrieving the notification details
   var httpHeaders = new Headers();
   httpHeaders.append('pragma', 'no-cache');
@@ -19,7 +18,8 @@ self.addEventListener('push', function(event) {
       return res.json().then(function(notificationData) {
         // Show notification
         console.log(notificationData);
-        console.log('setting up notification');
+        
+        console.log('Setting up notification');
         self.addEventListener('notificationclick', function(e) {
           //Close the notificaiton
           e.notification.close();

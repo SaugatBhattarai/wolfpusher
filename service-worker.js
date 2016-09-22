@@ -8,9 +8,11 @@ self.addEventListener('activate', function(event) {
   console.log('Activated', event);
 });
 
+
 self.addEventListener('push', function(event) {
-  console.log('This is test push. Push notification');
+  console.log('Push notification received ... ');
 });	
+
 
 // self.addEventListener('fetch',function(event){
 //   // console.log(event.request);
